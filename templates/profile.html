@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
+{% load hitcount_tags %}
 
 {% block content %}
+<div class="center-container">
     <div class="profile-container">
         <div class="profile-left">
             <img src="{{ user_author.profile_pic.url }}" alt="Profile Picture" width="200">
@@ -11,9 +13,31 @@
             <p>Bio: {{ user_author.bio }}</p>
         </div>
     </div>
+</div>
 
     <h3>Your Posts:</h3>
-    {% for post in user_posts %}
-        <p><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></p>
-    {% endfor %}
+
+    <div class="posts-table">
+        <div class="table-head">
+            <div class="status">Status</div>
+            <div class="subjects">Subjects</div>
+            <div class="replies">Replies/Views</div>
+        </div>
+
+        {% for post in user_posts %}
+            <div class="table-row">
+                <div class="status"><i class="fa fa-fire"></i></div>
+                <div class="subjects">
+                    <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+                    <br>
+                    <span>Started by <b><a href="">{{ post.user.fullname|title }}</a></b>.</span>
+                </div>
+                <div class="replies">
+                    {{ post.num_comments }} comments <br> {% get_hit_count for post %} views
+                </div>
+                
+            </div>
+        {% endfor %}
+    </div>
+
 {% endblock %}
