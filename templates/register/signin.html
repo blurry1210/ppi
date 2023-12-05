@@ -3,17 +3,12 @@
 {% block content %}
 
 
-{% block search_bar %}
-    <!-- No search bar on signup/signin pages -->
-    <h1 style="text-align:center; margin-block:50px; color:red;">LogIn</h1>
+<h1 style="text-align:center; margin-block:50px; color:red;">Sign In</h1>
 
-    <form method="POST" action="." style="margin-left:150px;">
-        {% csrf_token %}    
-        {{form|crispy}}
-        <input type="submit" value="Signin"  style="margin-block:50px;">
-    </form>
-{% endblock %}
-
-
+<form method="POST" action="." style="margin-left:150px;">
+    {% csrf_token %}    
+    {{form|crispy}}
+    <input type="submit" value="Sign in"  style="margin-block:50px;">
+</form>
 
 {% endblock content %}
