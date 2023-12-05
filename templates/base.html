@@ -39,6 +39,7 @@
              {% if request.resolver_match.url_name != 'profile'%}
                 {% if request.resolver_match.url_name != 'signup'%}
                     {% if request.resolver_match.url_name != 'signin'%}
+                     {% if request.resolver_match.url_name != 'create_post'%}
                 <form action="{% url 'search_result' %}" role="form" method="GET">
                 <div class="search-box">
                     <div>
@@ -55,6 +56,7 @@
              {% endif %}
              {% endif %}
              {% endif %}
+                {% endif %}
     </header>
     {% if messages %}
         {% for message in messages %}
