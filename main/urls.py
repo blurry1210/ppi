@@ -10,4 +10,5 @@ urlpatterns = [
     path("create_post", create_post, name="create_post"),
     path("latest_posts", latest_posts, name="latest_posts"),
     path("search", search_result, name="search_result"),
+    path('post/<slug:slug>/', detail, name='post_detail'),
 ]

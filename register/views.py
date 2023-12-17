@@ -21,9 +21,28 @@ def view_profile(request, username):
     return render(request, 'profile.html', context)
 
 
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from .models import Author, Post
+
+@login_required
 def profile(request):
-    user_author = Author.objects.get(user=request.user)
-    user_posts = Post.objects.filter(user=user_author)
+    # Ensure we have an authenticated user
+    if not request.user.is_authenticated:
+        # Redirect to the login page or another appropriate page
+        return redirect('login')
+
+    # Retrieve the Author instance related to the current user
+    try:
+        user_author = Author.objects.get(user=request.user)
+    except Author.DoesNotExist:
+        # Handle the case where the Author instance does not exist
+        # For example, create a new Author instance or redirect
+        user_author = None  # Or handle it differently
+
+    # Retrieve posts related to the author
+    # Adjust the query if your Post model is linked to the Author model differently
+    user_posts = Post.objects.filter(author=user_author)
 
     context = {
         'user_author': user_author,
@@ -32,6 +51,7 @@ def profile(request):
     }
 
     return render(request, 'profile.html', context)
+
 
 def signup(request):
     context = {}
@@ -68,7 +88,8 @@ def signin(request):
 def update_profile(request):
     context = {}
     user = request.user 
-    form = UpdateForm(request.POST, request.FILES)
+    user_author, created = Author.objects.get_or_create(user=request.user)
+    form = UpdateForm(request.POST or None, request.FILES or None, instance=user_author)
     if request.method == "POST":
         if form.is_valid():
             update_profile = form.save(commit=False)
