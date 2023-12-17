@@ -1,18 +1,18 @@
 {% extends 'base.html' %}
-{% load hitcount_tags %}
+
 {% block content %}
 
     <div class="container">
         <div class="subforum">
             {% if forums %}
                 <div class="subforum-title">
-                    <h1>PRIMARY CATEGORIES</h1>
+                    <h1>General Information</h1>
                 </div>
 
                 {% for forum in forums %}
                     <div class="subforum-row">
                         <div class="subforum-icon subforum-column center">
-                            <i class="fa fa-comments"></i>
+                            <i class="fa fa-gamepad"></i>
                         </div>
                         <div class="subforum-description subforum-column">
                             <h4><a href="{{forum.get_url}}">{{forum.title}}</a></h4>
@@ -47,7 +47,7 @@
     <!-- Forum Info -->
     <div class="forum-info">
         <div class="chart">
-            F1-ZONE - Stats &nbsp;<i class="fa fa-bar-chart"></i>
+            MyForum - Stats &nbsp;<i class="fa fa-bar-chart"></i>
         </div>
         <span><u>{{num_posts}}</u> Posts in <u>{{num_categories}}</u> Categories by <u>{{num_users}}</u> Members.</span><br>
         {% if forums %}

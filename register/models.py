@@ -1,1 +1,1 @@
-from main.models import Category, Comment, Post, Author, Reply
+from django.db import models

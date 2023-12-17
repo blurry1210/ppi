@@ -7,13 +7,7 @@ from hitcount.models import HitCountMixin, HitCount
 from django.contrib.contenttypes.fields import GenericRelation
 from taggit.managers import TaggableManager
 from django.shortcuts import reverse
-from django.contrib.auth.models import User
-from django.db import models
-from django.utils.text import slugify
-from django.db.models.signals import pre_save
-from django.dispatch import receiver
 import uuid
-
 
 User = get_user_model()
 
@@ -21,49 +15,23 @@ class Author(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     fullname = models.CharField(max_length=40, blank=True)
     slug = models.SlugField(max_length=400, unique=True, blank=True)
-    bio = HTMLField(blank=True, default="bio")
+    bio = HTMLField(blank=True)
     points = models.IntegerField(default=0)
     profile_pic = ResizedImageField(size=[50, 80], quality=100, upload_to="authors", default=None, null=True, blank=True)
 
     def __str__(self):
-        return self.fullname
+        return self.fullname or self.user.username
 
     @property
     def num_posts(self):
-        return Post.objects.filter(user=self).count()
+        return Post.objects.filter(author=self).count()
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            # Generate a preliminary slug
-            self.slug = slugify(self.fullname)
-            # Check if the slug already exists and append a UUID if it does
+            self.slug = slugify(self.fullname if self.fullname else self.user.username)
             while Author.objects.filter(slug=self.slug).exists():
-                self.slug = f"{slugify(self.fullname)}-{uuid.uuid4()}"
+                self.slug = f"{self.slug}-{uuid.uuid4()}"
         super(Author, self).save(*args, **kwargs)
-    
-    id = models.BigAutoField(primary_key=True)
-    
-class AuthorAdmin(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    fullname = models.CharField(max_length=40, blank=True)
-    slug = slug = models.SlugField(max_length=400, unique=True, blank=True)
-    bio = HTMLField(blank=True, default="bio")
-    points = models.IntegerField(default=0)
-    profile_pic = ResizedImageField(size=[50, 80], quality=100, upload_to="authors", default=None, null=True, blank=True)
-
-    def __str__(self):
-        return self.fullname
-
-    @property
-    def num_posts(self):
-        return Post.objects.filter(user=self).count()
-    
-
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.fullname)
-        super(Author, self).save(*args, **kwargs)
-    id = models.BigAutoField(primary_key=True)
 
 class Category(models.Model):
     title = models.CharField(max_length=50)
@@ -85,7 +53,7 @@ class Category(models.Model):
         return reverse("posts", kwargs={
             "slug":self.slug
         })
-    
+
     @property
     def num_posts(self):
         return Post.objects.filter(categories=self).count()
@@ -93,7 +61,6 @@ class Category(models.Model):
     @property
     def last_post(self):
         return Post.objects.filter(categories=self).latest("date")
-    id = models.BigAutoField(primary_key=True)
 
 
 class Reply(models.Model):
@@ -106,7 +73,6 @@ class Reply(models.Model):
 
     class Meta:
         verbose_name_plural = "replies"
-    id = models.BigAutoField(primary_key=True)
 
 
 class Comment(models.Model):
@@ -117,14 +83,12 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.content[:100]
-    id = models.BigAutoField(primary_key=True)
 
 
 class Post(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts_as_user')
-    author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name='posts_as_author')
     title = models.CharField(max_length=400)
     slug = models.SlugField(max_length=400, unique=True, blank=True)
+    user = models.ForeignKey(Author, on_delete=models.CASCADE)
     content = HTMLField()
     categories = models.ManyToManyField(Category)
     date = models.DateTimeField(auto_now_add=True)
@@ -148,7 +112,6 @@ class Post(models.Model):
         return reverse("detail", kwargs={
             "slug":self.slug
         })
-        
 
     @property
     def num_comments(self):
@@ -157,10 +120,3 @@ class Post(models.Model):
     @property
     def last_reply(self):
         return self.comments.latest("date")
-    id = models.BigAutoField(primary_key=True)
-
-    def get_absolute_url(self):
-        return reverse('detail', kwargs={'slug': self.slug})
-    
-class Forum(models.Model):
-    name = models.CharField(max_length=100)

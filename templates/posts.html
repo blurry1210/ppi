@@ -1,43 +1,82 @@
 {% extends 'base.html' %}
+{% load hitcount_tags %}
 {% block content %}
     <div class="container">
+        <!--Navigation-->
         <div class="navigate">
-            <span><a href="{% url 'home' %}">F1-ZONE</a> >> <a href="#">Forum Title</a></span>
+            <span><a href="{% url 'home' %}">MyForum - Forums</a> >> <a href="{{forum.get_url}}">{{forum.title}}</a></span>
         </div>
-        
-        <!-- Static content for testing -->
-        <h1>Forum Posts</h1>
-        
-        {% for post in posts %}
-        <div class="table-row">
-            <!-- Simple conditional without assuming extra methods -->
-            <div class="status">
-                {% if post.closed %}
-                    <i class="fa fa-lock"></i>
-                {% else %}
-                    <i class="fa fa-unlock"></i>
-                {% endif %}
-            </div>
+        {% if posts %}
+            <!--Display posts table-->
+            <div class="posts-table">
+                <div class="table-head">
+                    <div class="status">Status</div>
+                    <div class="subjects">Subjects</div>
+                    <div class="replies">Replies/Views</div>
+                    <div class="last-reply">Last Reply</div>
+                </div>
 
-            <div class="subjects">
-                <a href="{% url 'post_detail' slug=post.slug %}">{{ post.title }}</a>
-                <br>
-                <!-- Display the author's full name -->
-                <span>Started by <b>{{ post.author.user.get_full_name }}</b></span>
+                {% for post in posts %}
+                <div class="table-row">
+
+                    {% if post.closed == True %}
+                    <div class="status"><i class="fa fa-lock"></i></div>
+                    {% elif post.num_comments == 0 %}
+                    <div class="status"><i class="fa fa-frown-o"></i></div>
+                    {% elif post.num_comments > 0 and post.num_comments < 2 %}
+                    <div class="status"><i class="fa fa-book"></i></div>
+                    {% elif post.num_comments > 2 and post.num_comments < 4 %}
+                    <div class="status"><i class="fa fa-rocket"></i></div>
+                    {% elif post.num_comments >= 4 %}
+                    <div class="status"><i class="fa fa-fire"></i></div>
+                    
+                    {% endif %}
+
+
+                    <div class="subjects">
+                        <a href="{{post.get_url}}">{{post.title}}</a>
+                        <br>
+                        <span>Started by <b><a href="">{{post.user.fullname|title}}</a></b> .</span>
+                    </div>
+                    <div class="replies">
+                        {{post.num_comments}} comments <br> {% get_hit_count for post %} views
+                    </div>
+
+                    {% if post.last_reply %}
+                    <div class="last-reply">
+                        {{post.last_reply.date|date}}
+                        <br>By <b><a href="">{{post.last_reply.user.fullname|title}}</a></b>
+                    </div>
+                    {% else %}
+                    <div class="last-reply">
+                        {{post.date|date}}
+                        <br>By <b><a href="">{{post.user.fullname|title}}</a></b>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            {% else %}
+            <div class="subforum-title">
+                <h1><i class="fa fa-frown-o"></i>&nbsp;you have no posts yet.</h1>
             </div>
+            {% endif %}
+            
+            
         </div>
-    {% empty %}
-        <p>No posts to display.</p>
-    {% endfor %}
+        <!--Pagination starts-->
+            {% if posts.is_paginated %}
+                <div class="pagination">
+                    pages: {% for num_page in posts.paginator.page_range %} <a href="?page={{num_page}}">{{num_page}}</a> {% endfor %}
+                </div>
+            {% endif %}
+        <!--pagination ends-->
     </div>
-    <!-- Pagination starts -->
-    {% if posts.has_other_pages %}
-        <div class="pagination">
-            <span>Pages:</span>
-            {% for num_page in posts.paginator.page_range %}
-                <a href="?page={{ num_page }}">{{ num_page }}</a>
-            {% endfor %}
-        </div>
-    {% endif %}
-    <!-- Pagination ends -->
-{% endblock content %}
+
+    <!-- <div class="note">
+        <span><i class="fa fa-frown-o"></i>&nbsp; 0 Engagement Topic</span>&nbsp;&nbsp;&nbsp;<a href=""><i class="fa fa-share-square"></i></a><br>
+        <span><i class="fa fa-book"></i>&nbsp; Low Engagement Topic</span>&nbsp;&nbsp;&nbsp;<a href=""><i class="fa fa-share-square"></i></a><br>
+        <span><i class="fa fa-fire"></i>&nbsp; Popular Topic</span>&nbsp;&nbsp;&nbsp;<a href=""><i class="fa fa-share-square"></i></a><br>
+        <span><i class="fa fa-rocket"></i>&nbsp; High Engagement Topic</span>&nbsp;&nbsp;&nbsp;<a href=""><i class="fa fa-share-square"></i></a><br>
+        <span><i class="fa fa-lock"></i>&nbsp; Closed Topic</span>&nbsp;&nbsp;&nbsp;<a href=""><i class="fa fa-share-square"></i></a><br>
+    </div> -->
+    {% endblock content %}

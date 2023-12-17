@@ -9,11 +9,9 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
-
-from pathlib import Path
-from django.apps import AppConfig
 import os
 
+from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -61,12 +59,10 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'project.urls'
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [BASE_DIR /"templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -80,40 +76,8 @@ TEMPLATES = [
     },
 ]
 
-TINYMCE_DEFAULT_CONFIG = {
-    'height': 360,
-    'width': 920,
-    'cleanup_on_startup': True,
-    'custom_undo_redo_levels': 20,
-    'selector': 'textarea',
-    'theme': 'modern',
-    'plugins': '''
-        textcolor save link image media preview codesample contextmenu
-        table code lists fullscreen  insertdatetime nonbreaking
-        contextmenu directionality searchreplace wordcount visualblocks
-        visualchars code fullscreen autolink lists charmap print
-        hr anchor pagebreak
-    ''',
-    'toolbar1': '''
-        fullscreen preview | bold italic underline | fontselect,
-        fontsizeselect | forecolor backcolor | alignleft alignright |
-        aligncenter alignjustify | indent outdent | bullist numlist table |
-        | link image media | codesample |
-    ''',
-    'toolbar2': '''
-        visualblocks visualchars |
-        charmap hr anchor pagebreak |
-        searchreplace wordcount visualblocks code |
-    ''',
-    'contextmenu': 'formats | link image',
-    'menubar': True,
-    'statusbar': True,
-}
-
-
 WSGI_APPLICATION = 'project.wsgi.application'
 
-default_auto_field = 'django.db.models.BigAutoField'
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
@@ -167,5 +131,5 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 MEDIA_ROOT  = BASE_DIR / 'media'
 MEDIA_URL = '/media/'
-
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 CRISPY_TEMPLATE_PACK = 'bootstrap4'

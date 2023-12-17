@@ -2,13 +2,12 @@
 {% load crispy_forms_tags %}
 {% block content %}
 
-
-<h1 style="text-align:center; margin-block:50px; color:red;">Sign In</h1>
+<h1 style="text-align:center; margin-block:50px; color:red;">LogIn</h1>
 
 <form method="POST" action="." style="margin-left:150px;">
     {% csrf_token %}    
     {{form|crispy}}
-    <input type="submit" value="Sign in"  style="margin-block:50px;">
+    <input type="submit" value="Signin"  style="margin-block:50px;">
 </form>
 
 {% endblock content %}

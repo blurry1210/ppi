@@ -21,25 +21,20 @@
                 <ul class="nav-list">
                     <li class="nav-item"><a href="{% url 'home' %}">Home</a></li>
                     {% if user.is_authenticated %}
-                    <li class="nav-item"><a href="{% url 'profile' %}">Profile</a></li>
-                    <li class="nav-item"><a href="{% url 'logout' %}">Log out</a></li>
+                    <li class="nav-item"><a href="{% url 'logout' %}">Logout</a></li>
                     {% else %}
-                    <li class="nav-item"><a href="{% url 'signup' %}">Sign up</a></li>
-                    <li class="nav-item"><a href="{% url 'signin' %}">Sign in</a></li>
+                    <li class="nav-item"><a href="{% url 'signup' %}">Signup</a></li>
+                    <li class="nav-item"><a href="{% url 'signin' %}">Signin</a></li>
                     {% endif %}
                 </ul>
             </nav>
             <a class="bar-icon" id="iconBar" onclick="hideIconBar()"><i class="fa fa-bars"></i></a>
-            <div class="brand">F1 ZONE</div>
+            <div class="brand">OZONE</div>
             {% if user.is_authenticated %}
             <div style="font-size:50px;font-weight:300px;margin-left:100px;"><a href="{% url 'create_post' %}">+</a></div>
             {% endif %}
         </div>
         <!--SearchBox Section-->
-             {% if request.resolver_match.url_name != 'profile'%}
-                {% if request.resolver_match.url_name != 'signup'%}
-                    {% if request.resolver_match.url_name != 'signin'%}
-                     {% if request.resolver_match.url_name != 'create_post'%}
                 <form action="{% url 'search_result' %}" role="form" method="GET">
                 <div class="search-box">
                     <div>
@@ -53,10 +48,6 @@
                     </div>
                 </div>
                 </form>
-             {% endif %}
-             {% endif %}
-             {% endif %}
-                {% endif %}
     </header>
     {% if messages %}
         {% for message in messages %}
@@ -67,7 +58,7 @@
     {% endblock content %}
     <div style="margin-bottom: 150px;"></div>
     <footer>
-        <span>&copy;  Borza Alex | proiect Programare Individuala 2023</span>
+        <span>&copy;  Elwil Reyes Hernandez | All Rights Reserved</span>
     </footer>
     <script src="{% static 'main.js' %}"></script>
 </body>
