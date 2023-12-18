@@ -129,16 +129,17 @@ def posts(request, slug):
 @login_required
 def create_post(request):
     context = {}
-    form = PostForm(request.POST or None)
     if request.method == "POST":
+        form = PostForm(request.POST, user=request.user)
         if form.is_valid():
-            print("\n\n its valid")
-            author = Author.objects.get(user=request.user)
             new_post = form.save(commit=False)
-            new_post.user = author
+            new_post.user = request.user.author
             new_post.save()
             form.save_m2m()
             return redirect("home")
+    else:
+        form = PostForm(user=request.user)
+
     context.update({
         "form": form,
         "title": "F1 ZONE: Create New Post"

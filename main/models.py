@@ -8,6 +8,8 @@ from django.contrib.contenttypes.fields import GenericRelation
 from taggit.managers import TaggableManager
 from django.shortcuts import reverse
 import uuid
+from main.utils import filter_curse_words
+
 
 User = get_user_model()
 
@@ -41,7 +43,7 @@ class Category(models.Model):
 
     class Meta:
         verbose_name_plural = "categories"
-        
+
     def __str__(self):
         return self.title
     
@@ -76,6 +78,11 @@ class Reply(models.Model):
     class Meta:
         verbose_name_plural = "replies"
 
+    def save(self, *args, **kwargs):
+        self.content = filter_curse_words(self.content)
+        super(Reply, self).save(*args, **kwargs)
+
+
 
 class Comment(models.Model):
     user = models.ForeignKey(Author, on_delete=models.CASCADE)
@@ -85,7 +92,10 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.content[:100]
-
+    
+    def save(self, *args, **kwargs):
+        self.content = filter_curse_words(self.content)
+        super(Comment, self).save(*args, **kwargs)
 
 class Post(models.Model):
     title = models.CharField(max_length=400)
