@@ -18,6 +18,7 @@ class Author(models.Model):
     bio = HTMLField(blank=True)
     points = models.IntegerField(default=0)
     profile_pic = ResizedImageField(size=[50, 80], quality=100, upload_to="authors", default=None, null=True, blank=True)
+    chosen_categories = models.ManyToManyField('Category', blank=True)
 
     def __str__(self):
         return self.fullname or self.user.username
@@ -40,6 +41,7 @@ class Category(models.Model):
 
     class Meta:
         verbose_name_plural = "categories"
+        
     def __str__(self):
         return self.title
     

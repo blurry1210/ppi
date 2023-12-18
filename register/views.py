@@ -6,6 +6,9 @@ from register.forms import UpdateForm
 from django.contrib.auth import logout as lt
 from django.contrib import messages
 from django.contrib.auth.models import User
+from .forms import UpdateProfileForm
+from  main.models import Author, Category, Post
+
 
 #usernames = [user.username for user in User.objects.all()]
 
@@ -43,14 +46,20 @@ def signin(request):
 @login_required
 def update_profile(request):
     context = {}
-    user = request.user 
-    form = UpdateForm(request.POST, request.FILES)
+    user = request.user
+    author, created = Author.objects.get_or_create(user=user)
+
     if request.method == "POST":
+        form = UpdateProfileForm(request.POST, request.FILES, instance=author)
         if form.is_valid():
             update_profile = form.save(commit=False)
             update_profile.user = user
             update_profile.save()
+            # This line ensures that the selected categories are saved after the main object
+            update_profile.chosen_categories.set(form.cleaned_data['chosen_categories'])
             return redirect("home")
+    else:
+        form = UpdateProfileForm(instance=author)
 
     context.update({
         "form": form,

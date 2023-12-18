@@ -30,6 +30,13 @@ def profile_view(request):
     return render(request, 'profile.html', context)
 
 def home(request):
+    # Filter categories based on user's chosen categories
+    if hasattr(request.user, 'author'):
+        chosen_categories = request.user.author.chosen_categories.all()
+        forums = Category.objects.filter(id__in=chosen_categories)
+    else:
+        forums = Category.objects.none() # Show none if no categories are chosen
+
     forums = Category.objects.all()
     num_posts = Post.objects.all().count()
     num_users = User.objects.all().count()
@@ -45,7 +52,7 @@ def home(request):
         "num_users":num_users,
         "num_categories":num_categories,
         "last_post":last_post,
-        "title": "OZONE forum app"
+        "title": "F1 ZONE forum app"
     }
     return render(request, "forums.html", context)
 
@@ -86,7 +93,7 @@ def detail(request, slug):
     context = {
         "post": post,
         "comments": comments,
-        "title": f"OZONE: {post.title}",
+        "title": "F1 ZONE: {post.title}",
     }
     update_views(request, post)
 
@@ -107,7 +114,7 @@ def posts(request, slug):
     context = {
         "posts":posts,
         "forum": category,
-        "title": "OZONE: Posts"
+        "title": "F1 ZONE: Posts"
     }
 
     return render(request, "posts.html", context)
@@ -128,7 +135,7 @@ def create_post(request):
             return redirect("home")
     context.update({
         "form": form,
-        "title": "OZONE: Create New Post"
+        "title": "F1 ZONE: Create New Post"
     })
     return render(request, "create_post.html", context)
 
@@ -136,7 +143,7 @@ def latest_posts(request):
     posts = Post.objects.all().filter(approved=True)[:10]
     context = {
         "posts":posts,
-        "title": "OZONE: Latest 10 Posts"
+        "title": "F1 ZONE: Latest 10 Posts"
     }
 
     return render(request, "latest-posts.html", context)
