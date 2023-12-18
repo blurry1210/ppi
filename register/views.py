@@ -22,7 +22,7 @@ def signup(request):
             return redirect("update_profile")
     context.update({
         "form":form, 
-        "title": "Signup",
+        "title": "Sign up",
     })
     return render(request, "register/signup.html", context)
 
@@ -39,7 +39,7 @@ def signin(request):
                 return redirect("home")
     context.update({
         "form": form,
-        "title": "Signin",
+        "title": "Sign in",
     })
     return render(request, "register/signin.html", context)
 
