@@ -113,6 +113,9 @@ class Post(models.Model):
             "slug":self.slug
         })
 
+    def get_absolute_url(self):
+        return reverse('detail', kwargs={'slug': self.slug})
+    
     @property
     def num_comments(self):
         return self.comments.count()

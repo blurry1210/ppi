@@ -10,6 +10,25 @@ from django.contrib import messages
 from .models import Post, Comment, Reply, Author
 from django.contrib.auth.decorators import login_required
 
+@login_required
+def profile_view(request):
+    # Fetch the Author instance related to the current user
+    try:
+        user_author = Author.objects.get(user=request.user)
+    except Author.DoesNotExist:
+        # Handle the case where the Author instance does not exist
+        user_author = None
+
+    # Fetch posts related to the author
+    user_posts = Post.objects.filter(user=user_author).order_by('-date') if user_author else []
+
+    context = {
+        'user_author': user_author,
+        'user_posts': user_posts,
+    }
+
+    return render(request, 'profile.html', context)
+
 def home(request):
     forums = Category.objects.all()
     num_posts = Post.objects.all().count()

@@ -431,6 +431,13 @@ footer{
     float: right;
 }
 
+.centered-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
 /* comment section */
 .comment-area{
     margin-bottom:50px;
