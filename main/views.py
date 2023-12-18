@@ -29,7 +29,6 @@ def profile_view(request):
 
     return render(request, 'profile.html', context)
 
-@login_required
 def home(request):
     # Initialize empty querysets
     forums = Category.objects.none()
