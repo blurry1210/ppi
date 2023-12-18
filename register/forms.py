@@ -12,7 +12,7 @@ class UpdateForm(forms.ModelForm):
 
 class UpdateProfileForm(forms.ModelForm):
     chosen_categories = forms.ModelMultipleChoiceField(
-        queryset=Category.objects.all(),  # Adjust the queryset as per your requirement
+        queryset=Category.objects.filter(id__in=[7,8,9,10,11,12,13,14,15,16]),  # IDs of optional categories
         widget=forms.CheckboxSelectMultiple,
         required=True
     )
@@ -26,3 +26,12 @@ class UpdateProfileForm(forms.ModelForm):
         if categories and categories.count() != 2:
             raise ValidationError("Please select exactly 2 categories.")
         return categories
+
+    def save(self, commit=True):
+        author = super().save(commit=False)
+        if commit:
+            author.save()
+            self.instance.chosen_categories.set(self.cleaned_data['chosen_categories'])
+            mandatory_categories = Category.objects.filter(id__in=[4,5,6])  # IDs of the mandatory categories
+            self.instance.chosen_categories.add(*mandatory_categories)
+        return author

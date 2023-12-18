@@ -43,28 +43,22 @@ def signin(request):
     })
     return render(request, "register/signin.html", context)
 
-@login_required
 def update_profile(request):
-    context = {}
     user = request.user
     author, created = Author.objects.get_or_create(user=user)
 
     if request.method == "POST":
         form = UpdateProfileForm(request.POST, request.FILES, instance=author)
         if form.is_valid():
-            update_profile = form.save(commit=False)
-            update_profile.user = user
-            update_profile.save()
-            # This line ensures that the selected categories are saved after the main object
-            update_profile.chosen_categories.set(form.cleaned_data['chosen_categories'])
+            form.save()
             return redirect("home")
     else:
         form = UpdateProfileForm(instance=author)
 
-    context.update({
+    context = {
         "form": form,
         "title": "Update Profile",
-    })
+    }
     return render(request, "register/update.html", context)
 
 @login_required

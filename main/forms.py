@@ -1,7 +1,12 @@
 from django import forms
 from .models import Post
 from .models import Author, Category
+from django import forms
+from main.models import Author, Category
+from django.core.exceptions import ValidationError
 
+
+    
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
