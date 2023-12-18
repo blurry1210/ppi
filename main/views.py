@@ -29,29 +29,36 @@ def profile_view(request):
 
     return render(request, 'profile.html', context)
 
+@login_required
 def home(request):
-    # Filter categories based on user's chosen categories
+    # Initialize empty querysets
+    forums = Category.objects.none()
+    last_post = None
+
+    # Check if the user has an 'author' profile and chosen categories
     if hasattr(request.user, 'author'):
         chosen_categories = request.user.author.chosen_categories.all()
-        forums = Category.objects.filter(id__in=chosen_categories)
+        if chosen_categories.exists():
+            forums = chosen_categories
+            num_posts = Post.objects.filter(categories__in=chosen_categories).count()
+            try:
+                last_post = Post.objects.filter(categories__in=chosen_categories).latest('date')
+            except Post.DoesNotExist:
+                last_post = None
+        else:
+            num_posts = 0
     else:
-        forums = Category.objects.none() # Show none if no categories are chosen
+        num_posts = 0
 
-    forums = Category.objects.all()
-    num_posts = Post.objects.all().count()
     num_users = User.objects.all().count()
     num_categories = forums.count()
-    try:
-        last_post = Post.objects.latest("date")
-    except:
-        last_post = []
 
     context = {
-        "forums":forums,
-        "num_posts":num_posts,
-        "num_users":num_users,
-        "num_categories":num_categories,
-        "last_post":last_post,
+        "forums": forums,
+        "num_posts": num_posts,
+        "num_users": num_users,
+        "num_categories": num_categories,
+        "last_post": last_post,
         "title": "F1 ZONE forum app"
     }
     return render(request, "forums.html", context)
