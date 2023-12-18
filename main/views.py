@@ -9,6 +9,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages
 from .models import Post, Comment, Reply, Author
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
 
 @login_required
 def profile_view(request):
@@ -158,3 +159,34 @@ def latest_posts(request):
 def search_result(request):
 
     return render(request, "search.html")
+
+@login_required
+def delete_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+
+    if request.user != post.user.user:
+        raise PermissionDenied
+
+    post.delete()
+    # Redirect to a success page or home page
+    return redirect('home')
+
+@login_required
+def delete_comment(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id)
+
+    if request.user != comment.user.user:
+        raise PermissionDenied
+
+    comment.delete()
+    return redirect('home')
+
+@login_required
+def delete_reply(request, reply_id):
+    reply = get_object_or_404(Reply, id=reply_id)
+
+    if request.user != reply.user.user:
+        raise PermissionDenied
+
+    reply.delete()
+    return redirect('home')

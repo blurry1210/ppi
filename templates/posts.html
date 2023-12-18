@@ -38,6 +38,9 @@
                         <br>
                         <span>Started by <b><a href="">{{post.user.fullname|title}}</a></b> .</span>
                     </div>
+                    {% if request.user == post.user.user %}
+                        <a href="{% url 'delete_post' post.id %}" class="delete-post-link">Delete Post</a>
+                     {% endif %}
                     <div class="replies">
                         {{post.num_comments}} comments <br> {% get_hit_count for post %} views
                     </div>

@@ -80,6 +80,9 @@
                 <div class="comment">
                     <button onclick="showReplies('comment{{ comment.id }}')">Reply</button>
                 </div>
+                {% if request.user == comment.user.user %}
+                     <a href="{% url 'delete_comment' comment.id %}" class="delete-comment-link">Delete Comment</a>
+                 {% endif %}
                 {% endif %}
             </div>
         </div>
@@ -113,6 +116,9 @@
             <div class="content">
                 {{ reply.content }}
                 <br>
+                {% if request.user == reply.user.user %}
+                    <a href="{% url 'delete_reply' reply.id %}" class="delete-reply-link">Delete Reply</a>
+                  {% endif %}
             </div>
         </div>
     </div>
